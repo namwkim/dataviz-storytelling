@@ -5,6 +5,14 @@ from PIL import Image
 
 # st.set_page_config(page_title="Interactive Dashboard", layout="wide")
 
+# Sidebar Navigation Menu using "with" notation
+with st.sidebar:
+    st.markdown("# Outline")
+    st.markdown("[Basic Content Display with `st.write()`](#basic-content-display-with-st-write)", unsafe_allow_html=True)
+    st.markdown("[Interactive Filtering with Input Widgets](#interactive-filtering-with-input-widgets)", unsafe_allow_html=True)
+    st.markdown("[Layout Customization – Structuring Your Dashboard](#structuring-your-dashboard-with-layout-customization)", unsafe_allow_html=True)
+
+
 st.title("Getting Started with Streamlit")
 
 st.header("Basic Content Display with `st.write()`")
@@ -152,7 +160,7 @@ st.divider()
 st.markdown("While Altair provides its own interactive widgets, Streamlit's widgets can be used across the entire page rather than being limited to individual Altair charts. Additionally, they offer a more aesthetically pleasing look and feel. You can check out other input widgets in the [Streamlit documentation: Input Widgets](https://docs.streamlit.io/develop/api-reference/widgets).")
 
 
-st.header("Layout Customization – Structuring Your Dashboard")
+st.header("Structuring Your Dashboard with Layout Customization")
 
 st.markdown("""
 ##### 1️⃣ Setting the Page Width
