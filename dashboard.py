@@ -65,12 +65,21 @@ else:
     ).reset_index(name="Prevailing Wage")
 
 # Line Chart
+brush = alt.selection_interval(name="brush", encodings=['x']) # Brush for selection
+
 line_chart = alt.Chart(trend_data).mark_line(point=True).encode(
     x="YEAR:O",
     y=measure_options[selected_measure],
     tooltip=["YEAR", measure_options[selected_measure]]
-)
-st.altair_chart(line_chart, use_container_width=True)
+).add_params(brush) # Add brush to chart
+
+# Grab selection
+selection = st.altair_chart(line_chart, use_container_width=True, on_select='rerun')
+
+# Filter based on selection e.g., [2021, 2022, 2023]
+if 'YEAR' in selection['selection']['brush']:
+    years = selection['selection']['brush']['YEAR']
+    df = df[df['YEAR'].isin(years)]
 
 st.divider()
 
@@ -144,20 +153,19 @@ with col2:
         st.altair_chart(map_chart, use_container_width=True)
 
     elif chart_type == "Boxplot":  # Make sure to use elif for clarity
-        # For Boxplot: Use Altair aggregation instead of constructing a field name string
         if selected_measure == "Number of Petitions":
-            # Use count aggregation on a field (e.g., PREVAILING_WAGE, since each row represents one petition)
-            boxplot = alt.Chart(df).mark_boxplot().encode(
-                y="STATE:N",
-                x=alt.Y("PREVAILING_WAGE:Q", aggregate="count", title="Count of Petitions")
-            )
+            boxplot_data = df.groupby(["STATE", category_options[selected_category]]).size(
+            ).reset_index(name="Count of Petitions")
         else:
-            # Use median aggregation on PREVAILING_WAGE
-            boxplot = alt.Chart(df).mark_boxplot().encode(
-                y="STATE:N",
-                x=alt.Y("PREVAILING_WAGE:Q", title="Prevailing Wage")
-            )
-        st.altair_chart(boxplot)
+            boxplot_data = df.groupby(["STATE", category_options[selected_category]])[
+                "PREVAILING_WAGE"].mean().reset_index(name="Prevailing Wage")
+            
+        # Boxplot
+        boxplot = alt.Chart(boxplot_data).mark_boxplot().encode(
+            y="STATE:N",
+            x=measure_options[selected_measure]+":Q"
+        )
+        st.altair_chart(boxplot, use_container_width=True)
 
 # **Third Column: Scatter Plot**
 with col3:
